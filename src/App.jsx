@@ -102,10 +102,10 @@ function App() {
         return {
           bg: 'bg-white',
           header: 'bg-white text-gray-800',
-          bubbleMe: 'bg-[#FA7670] text-white rounded-2xl px-3 py-2 text-[14px]',
-          bubblePartner: 'bg-[#F2F2F2] text-[#333333] rounded-2xl px-3 py-2 text-[14px]',
+          bubbleMe: 'bg-[#FA7670] text-white rounded-[18px] px-4 py-[7px] text-[14.5px] relative after:content-[""] after:absolute after:top-0 after:-right-[5px] after:w-0 after:h-0 after:border-t-[10px] after:border-t-[#FA7670] after:border-r-[8px] after:border-r-transparent',
+          bubblePartner: 'bg-[#F2F2F2] text-[#333] rounded-[18px] px-4 py-[7px] text-[14.5px] relative before:content-[""] before:absolute before:top-0 before:-left-[5px] before:w-0 before:h-0 before:border-t-[10px] before:border-t-[#F2F2F2] before:border-l-[8px] before:border-l-transparent',
           partnerName: 'hidden',
-          time: 'text-[10px] text-gray-400 mx-1 self-end mb-1',
+          time: 'text-[10px] text-[#B8B8B8] mx-1 mb-[1px] leading-tight',
           input: 'bg-white border-t border-gray-100',
         };
       default: // LINE
@@ -157,32 +157,36 @@ function App() {
         );
       case MODES.WITH:
         return (
-          <div className="flex flex-col w-full bg-white relative shadow-[0_1px_2px_rgba(0,0,0,0.03)] z-30 pb-2">
-            <div className="flex items-center justify-between px-2 h-14 pt-2">
+          <div className="flex flex-col w-full bg-white relative shadow-[0_1px_2px_rgba(0,0,0,0.03)] z-30">
+            <div className="flex items-center justify-between px-2 h-14">
               <div className="flex items-center">
-                <button className="p-2"><ChevronLeft size={32} className="text-[#C8C8C8]" strokeWidth={1.5} /></button>
-                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden mr-2">
-                  {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <User size={20} className="m-2 text-gray-500" />}
+                <button className="p-2"><ChevronLeft size={30} className="text-[#C8C8C8]" strokeWidth={2.5} /></button>
+                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden mr-2">
+                  {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-[#E5E5E5] flex items-center justify-center"><User size={24} className="text-white" /></div>}
                 </div>
-                <span className="font-bold text-[#444] text-[15px]">みー</span>
-                <span className="ml-[2px] text-gray-400"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#C8C8C8]"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></span>
+                <span className="font-bold text-[#444] text-[16px]">みー</span>
+                <div className="flex items-center ml-1 gap-1">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-[#C8C8C8]"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#C8C8C8" className="text-[#C8C8C8]"><path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"></path></svg>
+                </div>
               </div>
               <button className="p-2 text-[#C8C8C8]"><MoreHorizontal size={26} /></button>
             </div>
 
-            {/* 'Interest' Banner */}
-            <div className="mx-3 mt-1.5 bg-[#F0FBFA] rounded-xl p-3 flex items-center justify-between relative">
-              <div className="flex flex-col leading-tight">
-                <span className="text-[10px] text-[#888] mb-[2px]">あなたへの</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-[#3DD3B6] text-xs">✦</span>
-                  <span className="font-bold text-[#444] text-[13px]">関心</span>
+            <div className="mx-3 mt-0 mb-2 bg-[#F0FBFA] rounded-xl p-3 flex items-center justify-between relative h-[54px]">
+              <div className="flex flex-col justify-center leading-tight">
+                <span className="text-[10px] text-[#A0A0A0] font-bold">あなたへの</span>
+                <div className="flex items-center gap-[2px]">
+                  <span className="text-[#3DD3B6] text-[15px]">✦</span>
+                  <span className="font-bold text-[#444] text-[14px]">関心</span>
                 </div>
               </div>
-              <button className="bg-[#B7373F] text-white text-[11px] font-bold py-1.5 px-6 rounded-full shadow-sm">
+              <button className="bg-[#B7373F] text-white text-[11px] font-bold py-[7px] px-6 rounded-full tracking-tighter">
                 詳細を見る
               </button>
-              <div className="absolute top-[50%] -translate-y-[50%] right-3 text-[#E0E0E0] opacity-50"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+              <div className="absolute top-[50%] -translate-y-1/2 right-[100px] text-[#D0D0D0] opacity-60">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              </div>
             </div>
           </div>
         );
@@ -243,8 +247,8 @@ function App() {
         );
       case MODES.WITH:
         return (
-          <div className="bg-white p-2 px-3 pb-8 flex items-center gap-3 border-t border-gray-100">
-            <button className="text-[#D0D0D0] p-1"><Camera size={28} strokeWidth={1.5} /></button>
+          <div className="bg-white p-2 px-3 pb-8 flex items-center gap-2 border-t border-gray-100 h-20">
+            <button className="text-[#D8D8D8] p-1"><Camera size={31} strokeWidth={1.2} /></button>
             <div className="flex-1 relative">
               <input
                 type="text"
@@ -252,16 +256,16 @@ function App() {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="メッセージを入力"
-                className="w-full bg-[#F6F6F6] border-none rounded-[24px] py-3 pl-4 pr-10 text-[15px] outline-none placeholder-[#BFBFBF]"
+                className="w-full bg-[#F6F6F6] border-none rounded-[28px] py-[10px] pl-4 pr-10 text-[15.5px] outline-none placeholder-[#C0C0C0]"
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D0D0D0]">☺</button>
+              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D8D8D8] text-[20px]">☺</button>
             </div>
             <button
               onClick={handleSend}
               disabled={!inputText.trim()}
-              className="text-[#E0E0E0] p-1"
+              className="p-1"
             >
-              <Send size={28} className={inputText.trim() ? "text-[#FA7670] fill-current" : "text-[#E0E0E0]"} />
+              <Send size={28} className={inputText.trim() ? "text-[#FA7670] fill-[#FA7670]" : "text-[#E0E0E0]"} />
             </button>
           </div>
         );
@@ -366,51 +370,63 @@ function App() {
         <div className="relative w-full max-w-[375px] h-[812px] bg-white rounded-[3rem] shadow-2xl border-[8px] border-gray-900 overflow-hidden flex flex-col font-sans">
 
           {/* Dynamic Header */}
-          {renderHeader()}
+          {mode !== MODES.WITH && renderHeader()}
 
-          {/* Chat Container (Target for Screenshot) */}
-          <div ref={chatContainerRef} className={`flex-1 flex flex-col ${styles.bg} overflow-hidden`}>
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
-              {/* Date Separator */}
-              <div className="text-center my-6">
-                {mode === MODES.LINE ? (
-                  <span className="text-[11px] text-white/90 bg-black/20 px-3 py-1 rounded-full">今日</span>
-                ) : mode === MODES.WITH ? (
-                  <span className="text-[11px] text-[#A0A0A0] bg-[#F5F5F5] px-3 py-0.5 rounded-full font-bold">12月23日 (火)</span>
-                ) : (
-                  <span className="text-[12px] text-gray-500 font-bold">2/15(木)</span>
-                )}
-              </div>
-
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start gap-2.5'} mb-2`}>
-                  {msg.sender === 'partner' && mode !== MODES.WITH && (
-                    <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex-shrink-0 overflow-hidden self-start">
-                      {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-gray-400 text-white"><User size={24} /></div>}
-                    </div>
-                  )}
-                  {/* For With, screenshot seems to show NO icon for partner. Just bubble. */}
-
-                  <div className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'} max-w-[76%]`}>
-                    <div className={`flex items-end gap-1.5 ${msg.sender === 'me' ? 'flex-row-reverse' : 'flex-row'} group`}>
-                      <div className={`whitespace-pre-wrap leading-relaxed break-words shadow-sm ${msg.sender === 'me' ? styles.bubbleMe : styles.bubblePartner}`}>
-                        {msg.text}
-                      </div>
-                      <div className="flex flex-col shrink-0 mb-0">
-                        {msg.sender === 'me' && mode === MODES.LINE && <span className="text-[10px] text-white leading-none mb-0.5">既読</span>}
-                        {msg.sender === 'me' && mode === MODES.PAIRS && <span className="text-[10px] text-white leading-none mb-0.5 font-bold">既読</span>}
-                        <span className={styles.time}>{msg.timestamp}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
+          {/* Wrapper for unified screens or fragmented screens */}
+          {mode === MODES.WITH ? (
+            <div className="flex-1 flex flex-col overflow-hidden bg-white">
+              <WithChatScreen
+                messages={messages}
+                currentUserId="me" // defaulting to 'me' visual style, logic handled inside
+                onSendMessage={handleSend}
+                inputText={inputText}
+                setInputText={setInputText}
+              />
             </div>
-          </div>
-          {/* Dynamic Footer */}
-          {renderFooter()}
+          ) : (
+            <>
+              {/* Chat Container (Target for Screenshot) */}
+              <div ref={chatContainerRef} className={`flex-1 flex flex-col ${styles.bg} overflow-hidden`}>
+                {/* Chat Messages */}
+                <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-4">
+                  {/* Date Separator */}
+                  <div className="text-center my-6">
+                    {mode === MODES.LINE ? (
+                      <span className="text-[11px] text-white/90 bg-black/20 px-3 py-1 rounded-full">今日</span>
+                    ) : (
+                      <span className="text-[12px] text-gray-500 font-bold">2/15(木)</span>
+                    )}
+                  </div>
+
+                  {messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start gap-2.5'} items-end mb-2`}>
+                      {msg.sender === 'partner' && mode !== MODES.WITH && (
+                        <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex-shrink-0 overflow-hidden self-start">
+                          {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-gray-400 text-white"><User size={24} /></div>}
+                        </div>
+                      )}
+
+                      <div className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'} max-w-[76%]`}>
+                        <div className={`flex items-end gap-[6px] ${msg.sender === 'me' ? 'flex-row-reverse' : 'flex-row'} group`}>
+                          <div className={`whitespace-pre-wrap leading-relaxed break-words shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${msg.sender === 'me' ? styles.bubbleMe : styles.bubblePartner}`}>
+                            {msg.text}
+                          </div>
+                          <div className="flex flex-col shrink-0 mb-[2px]">
+                            {msg.sender === 'me' && mode === MODES.LINE && <span className="text-[10px] text-white leading-none mb-0.5">既読</span>}
+                            {msg.sender === 'me' && mode === MODES.PAIRS && <span className="text-[10px] text-[#00ADC1] leading-none mb-0.5 font-bold">既読</span>}
+                            <span className={styles.time}>{msg.timestamp}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+              </div>
+              {/* Dynamic Footer */}
+              {renderFooter()}
+            </>
+          )}
         </div>
       </div>
     </div>
