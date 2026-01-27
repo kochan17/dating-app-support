@@ -23,6 +23,10 @@ function App() {
     const saved = localStorage.getItem('chat_icons');
     return saved ? JSON.parse(saved) : { me: null, partner: null };
   });
+  const [partnerName, setPartnerName] = useState(() => {
+    const saved = localStorage.getItem('partner_name');
+    return saved || 'みー';
+  });
   const [inputText, setInputText] = useState('');
   const [sender, setSender] = useState('me');
   const chatEndRef = useRef(null);
@@ -35,6 +39,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('chat_icons', JSON.stringify(icons));
   }, [icons]);
+
+  useEffect(() => {
+    localStorage.setItem('partner_name', partnerName);
+  }, [partnerName]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -53,6 +61,19 @@ function App() {
     };
     setMessages([...messages, newMessage]);
     setInputText('');
+  };
+
+  const handleImageSend = (imageData) => {
+    const now = new Date();
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const newMessage = {
+      id: Date.now(),
+      sender,
+      image: imageData,
+      timestamp: timeStr,
+      status: 'read',
+    };
+    setMessages([...messages, newMessage]);
   };
 
   const handleIconUpload = (type, e) => {
@@ -344,6 +365,16 @@ function App() {
                 </div>
               </label>
             </div>
+            <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+              <span className="text-sm">相手の名前</span>
+              <input
+                type="text"
+                value={partnerName}
+                onChange={(e) => setPartnerName(e.target.value)}
+                className="w-32 bg-gray-700 border border-gray-600 rounded-lg px-2 py-1 text-sm outline-none focus:border-pink-500"
+                placeholder="名前"
+              />
+            </div>
           </div>
         </div>
 
@@ -377,10 +408,13 @@ function App() {
             <div className="flex-1 flex flex-col overflow-hidden bg-white">
               <WithChatScreen
                 messages={messages}
-                currentUserId="me" // defaulting to 'me' visual style, logic handled inside
+                currentUserId="me"
                 onSendMessage={handleSend}
+                onSendImage={handleImageSend}
                 inputText={inputText}
                 setInputText={setInputText}
+                partnerName={partnerName}
+                partnerIcon={icons.partner}
               />
             </div>
           ) : (
