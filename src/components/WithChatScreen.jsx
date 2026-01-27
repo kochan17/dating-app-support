@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Send, Camera } from 'lucide-react';
 
-const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, setInputText }) => {
+const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, inputText, setInputText, partnerName, partnerIcon }) => {
+  const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -11,6 +12,21 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
   // Helper to format time (e.g., "18:31")
   const formatTime = (timestamp) => {
     return timestamp; // Assuming timestamp is already formatted or we format it here
+  };
+
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && onSendImage) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onSendImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -34,10 +50,16 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
           <div className="topic-header_contents flex items-center justify-center flex-1">
             <a className="topic-header_contents_user-link flex items-center text-decoration-none" href="#">
               <div className="mr-2">
-                <img className="topic-header_contents_thumb w-9 h-9 rounded-full object-cover border border-gray-100" src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" alt="User Thumb" />
+                <div className="w-9 h-9 rounded-full overflow-hidden border border-gray-100 bg-gray-200">
+                  {partnerIcon ? (
+                    <img className="w-full h-full object-cover" src={partnerIcon} alt="User Thumb" />
+                  ) : (
+                    <img className="w-full h-full object-cover" src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" alt="User Thumb" />
+                  )}
+                </div>
               </div>
               <div className="topic-header_contents_name text-ellipsis font-bold text-[15px] text-[#333] max-w-[120px] overflow-hidden whitespace-nowrap">
-                ももか
+                {partnerName || 'ももか'}
               </div>
             </a>
             <div className="topic-header_contents_nickname-alias-icon ml-1 cursor-pointer" data-dialog-id="nickname-alias-dialog">
@@ -93,7 +115,13 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
                 {/* Partner Avatar */}
                 {!isMe && (
                   <a href="#" className="block mr-2 self-end mb-[2px]">
-                    <img className="message_thumb w-[36px] h-[36px] rounded-full object-cover" src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" alt="Partner" />
+                    <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-200">
+                      {partnerIcon ? (
+                        <img className="w-full h-full object-cover" src={partnerIcon} alt="Partner" />
+                      ) : (
+                        <img className="w-full h-full object-cover" src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" alt="Partner" />
+                      )}
+                    </div>
                   </a>
                 )}
 
@@ -108,7 +136,7 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
                         shadow-[0_1px_1px_rgba(0,0,0,0.05)]
                         ${isMe
                         ? 'bg-[#FA7670] text-white rounded-tr-sm'
-                        : 'bg-[#F2F2F2] text-[#333] rounded-tl-sm'
+                        : 'bg-white text-[#333] rounded-tl-sm border border-[#F2F2F2]'
                       }
                       `}>
                       {/* 
@@ -122,9 +150,19 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
                       )}
                       {!isMe && (
                         <div className="absolute top-0 -left-[6px] w-0 h-0 border-t-[10px] border-t-[#F2F2F2] border-l-[8px] border-l-transparent"></div>
+                        /* Note: The reference image shows partner bubbles are white with a border, while 'me' bubbles are pink. 
+                           The tail for partner should also be consistent with the bubble color. 
+                           Using #F2F2F2 as tail border-t for now as it matches the slightly greyish tail in standard 'with' 
+                           even if the bubble is white. */
                       )}
 
-                      <p className="whitespace-pre-wrap break-words m-0">{msg.text}</p>
+                      <p className="whitespace-pre-wrap break-words m-0">
+                        {msg.image ? (
+                          <img src={msg.image} alt="Sent" className="max-w-full rounded-lg" />
+                        ) : (
+                          msg.text
+                        )}
+                      </p>
                     </div>
 
                     {/* Meta (Read status, Time) */}
@@ -138,13 +176,40 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, inputText, set
               </div>
             );
           })}
+          {/* Response Received Card */}
+          <div className="mt-8 mb-4 mx-2">
+            <div className="bg-[#FFF5F5] rounded-2xl p-3 flex items-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#FFE8E8]">
+              <div className="w-12 h-12 rounded-full overflow-hidden mr-3 bg-gray-200 shrink-0">
+                {partnerIcon ? (
+                  <img src={partnerIcon} className="w-full h-full object-cover" />
+                ) : (
+                  <img src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" className="w-full h-full object-cover" />
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[#FA7670] font-bold text-[14px] leading-tight mb-[2px]">{partnerName || 'あや'}さんから</span>
+                <span className="text-[#333] font-bold text-[15px] leading-tight">回答が届きました</span>
+              </div>
+              <div className="ml-auto text-[#FFB0B0]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+
           <div ref={chatEndRef} />
         </div>
       </div>
 
       {/* Footer / Input Area */}
       <div className="bg-white p-2 px-3 pb-8 flex items-center gap-2 border-t border-[#ECECEB] h-[70px]">
-        <button className="text-[#D8D8D8] p-1">
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+        <button className="text-[#D8D8D8] p-1" onClick={handleCameraClick}>
           <Camera size={31} strokeWidth={1.2} />
         </button>
         <div className="flex-1 relative">
