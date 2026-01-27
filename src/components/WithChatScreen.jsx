@@ -29,6 +29,49 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, i
     }
   };
 
+  const ReadReceiptAppeal = () => (
+    <div className='message-read-receipt-appeal bg-[#F8F8F8] p-4 my-6 rounded-xl relative border border-[#EEE] overflow-hidden'>
+      <div className='flex items-center gap-2 mb-2'>
+        <div className='w-4 h-4 bg-[#FA7670] rounded-full flex items-center justify-center'>
+          <div className='w-1.5 h-1.5 bg-white rounded-full'></div>
+        </div>
+        <span className='text-[11px] text-[#A0A0A0]'>あなただけに表示されています</span>
+      </div>
+      <div className='flex items-center gap-4'>
+        <div className='w-12 h-12 shrink-0'>
+          <img className="w-full h-full object-contain"
+            src="//cdn.with.is/assets/shared/atoms/icons/read_red-7d0f09cd33106253af5db4cb6e93f133a9dd561d608e748d439158f9d4fef44d.png" alt="" />
+        </div>
+        <div className='flex-1'>
+          <div className='text-[12px] text-[#888] mb-0.5'>メッセージが既読か知りたい方へ</div>
+          <div className='text-[14px] font-bold text-[#333] mb-1'>既読機能を使ってみませんか？</div>
+          <button className='text-[#FA7670] text-[13px] font-bold'>詳細を見る</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ResponseReceivedCard = ({ partnerName, partnerIcon }) => (
+    <div className="message-response-received-card mt-8 mb-4">
+      <div className="bg-[#FFF5F5] rounded-2xl p-3 flex items-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#FFE8E8]">
+        <div className="w-12 h-12 rounded-full overflow-hidden mr-3 bg-gray-200 shrink-0">
+          {partnerIcon ? (
+            <img src={partnerIcon} className="w-full h-full object-cover" />
+          ) : (
+            <img src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" className="w-full h-full object-cover" />
+          )}
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[#FA7670] font-bold text-[14px] leading-tight mb-[2px]">{partnerName || 'あや'}さんから</span>
+          <span className="text-[#333] font-bold text-[15px] leading-tight">回答が届きました</span>
+        </div>
+        <div className="ml-auto text-[#FFB0B0]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col h-full bg-white font-sans text-[#333]">
       {/* 
@@ -102,15 +145,26 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, i
       {/* Messages Area */}
       <div className="messages flex-1 overflow-y-auto p-0 bg-white relative">
         <div className="p-4">
-          {/* Date Separator Example */}
-          <div className="message_date-separator text-center text-[11px] text-[#A0A0A0] font-bold my-6 relative">
-            <span className="bg-[#F5F5F5] px-4 py-1 rounded-full">12月9日（火）</span>
-          </div>
+          {messages.map((msg, index) => {
+            if (msg.type === 'date') {
+              return (
+                <div key={`date-${index}`} className="message_date-separator text-center text-[11px] text-[#A0A0A0] font-bold my-6 relative">
+                  <span className="bg-[#F5F5F5] px-4 py-1 rounded-full">{msg.text}</span>
+                </div>
+              );
+            }
 
-          {messages.map((msg) => {
+            if (msg.type === 'appeal') {
+              return <ReadReceiptAppeal key={`appeal-${index}`} />;
+            }
+
+            if (msg.type === 'response-card') {
+              return <ResponseReceivedCard key={`card-${index}`} partnerName={partnerName} partnerIcon={partnerIcon} />;
+            }
+
             const isMe = msg.sender === 'me';
             return (
-              <div key={msg.id} className={`flex w-full mb-[18px] ${isMe ? 'justify-end' : 'justify-start'}`}>
+              <div key={msg.id || index} className={`flex w-full mb-[18px] ${isMe ? 'justify-end' : 'justify-start'}`}>
 
                 {/* Partner Avatar */}
                 {!isMe && (
@@ -139,21 +193,11 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, i
                         : 'bg-white text-[#333] rounded-tl-sm border border-[#F2F2F2]'
                       }
                       `}>
-                      {/* 
-                           Tail Implementation using Pseudo-elements simulation 
-                           Tailwind arbitrary values for precise tail rendering if needed, 
-                           but rounded-tr-sm / rounded-tl-sm is a good approximation for 'with'. 
-                           Real 'with' uses ::before/::after borders.
-                        */}
                       {isMe && (
                         <div className="absolute top-0 -right-[6px] w-0 h-0 border-t-[10px] border-t-[#FA7670] border-r-[8px] border-r-transparent"></div>
                       )}
                       {!isMe && (
                         <div className="absolute top-0 -left-[6px] w-0 h-0 border-t-[10px] border-t-[#F2F2F2] border-l-[8px] border-l-transparent"></div>
-                        /* Note: The reference image shows partner bubbles are white with a border, while 'me' bubbles are pink. 
-                           The tail for partner should also be consistent with the bubble color. 
-                           Using #F2F2F2 as tail border-t for now as it matches the slightly greyish tail in standard 'with' 
-                           even if the bubble is white. */
                       )}
 
                       <p className="whitespace-pre-wrap break-words m-0">
@@ -176,25 +220,6 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, i
               </div>
             );
           })}
-          {/* Response Received Card */}
-          <div className="mt-8 mb-4 mx-2">
-            <div className="bg-[#FFF5F5] rounded-2xl p-3 flex items-center shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#FFE8E8]">
-              <div className="w-12 h-12 rounded-full overflow-hidden mr-3 bg-gray-200 shrink-0">
-                {partnerIcon ? (
-                  <img src={partnerIcon} className="w-full h-full object-cover" />
-                ) : (
-                  <img src="//cdn.with.is/uploads/user_photo/image/115135197/thumb_image_251015084305.jpg" className="w-full h-full object-cover" />
-                )}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[#FA7670] font-bold text-[14px] leading-tight mb-[2px]">{partnerName || 'あや'}さんから</span>
-                <span className="text-[#333] font-bold text-[15px] leading-tight">回答が届きました</span>
-              </div>
-              <div className="ml-auto text-[#FFB0B0]">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </div>
-            </div>
-          </div>
 
           <div ref={chatEndRef} />
         </div>
@@ -219,11 +244,8 @@ const WithChatScreen = ({ messages, currentUserId, onSendMessage, onSendImage, i
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && onSendMessage()}
             placeholder="メッセージを入力"
-            className="w-full bg-[#F6F6F6] border-none rounded-[28px] py-[10px] pl-4 pr-10 text-[15.5px] outline-none placeholder-[#C0C0C0]"
+            className="w-full bg-[#F6F6F6] border-none rounded-[28px] py-[10px] px-4 text-[15.5px] outline-none placeholder-[#C0C0C0]"
           />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D8D8D8] text-[20px]">
-            ☺
-          </button>
         </div>
         <button
           onClick={onSendMessage}

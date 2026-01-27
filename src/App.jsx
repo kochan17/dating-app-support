@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { Camera, Send, User, Users, Smartphone, RefreshCcw, Download, Image as ImageIcon, ChevronLeft, MoreHorizontal, Phone, Video } from 'lucide-react';
+import WithChatScreen from './components/WithChatScreen';
 
 const MODES = {
   LINE: 'line',
@@ -9,8 +10,46 @@ const MODES = {
 };
 
 const INITIAL_MESSAGES = [
-  { id: 1, sender: 'partner', text: 'はじめまして。よろしくおねがいします(^^)\n漫画読んだり、カフェを開拓したりするのが好きです。\nよろしくお願いします。\n\n中国語はけっこう話せるんですか？😊', timestamp: '18:48', status: 'read' },
-  { id: 2, sender: 'me', text: 'はじめまして！素敵なご趣味ですね😊私もカフェは興味があるのですが、なかなか一人でお店に入れず良いお店を知らないので教えていただけたら嬉しいです！\n\n中国語は趣味でやっているだけなのでまだまだです〜💦今年こそ頑張りたいと思っています...！外国語は本当に難しいですね...！', timestamp: '08:56', status: 'read' },
+  { type: 'date', text: '12月9日（火）' },
+  { id: 1, sender: 'me', text: '雰囲気タイプすぎていいねさせていただきました🙇‍♂️', timestamp: '18:31' },
+  { id: 2, sender: 'partner', text: 'はじめまして(*^^*)最近ハイボールが好きでよく飲みます！Akiraさんはどんなお酒を飲まれますか？', timestamp: '22:39' },
+  { type: 'date', text: '12月10日（水）' },
+  { id: 3, sender: 'me', text: 'あやさん！女性らしい優しさと美しさが詰まったようなステキな名前ですね！', timestamp: '00:23' },
+  { type: 'appeal' },
+  { id: 4, sender: 'me', text: '僕はコウタといいます！', timestamp: '00:24' },
+  { id: 5, sender: 'me', text: 'ジョージ最近見ないな〜って思ってたら、あやさんのとこにいたんですね', timestamp: '00:25' },
+  { id: 6, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '04:14' },
+  { id: 7, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '04:15' },
+  { id: 8, sender: 'me', text: 'あ、ジョージUFOキャッチャーに転職してたんだ！', timestamp: '14:48' },
+  { type: 'date', text: '2月15日（木）' },
+  { type: 'response-card' },
+  { id: 9, sender: 'me', text: 'あやさんが頑張って自分のところに人事異動させたんですね', timestamp: '14:49' },
+  { type: 'date', text: '12月11日（木）' },
+  { id: 10, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '10:31' },
+  { id: 11, sender: 'me', text: '八百長のような発言ですね、興味深い', timestamp: '19:25' },
+  { id: 12, sender: 'me', text: '何課ですか？ヒト課？', timestamp: '19:26' },
+  { id: 13, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '20:14' },
+  { id: 14, sender: 'me', text: '布課わろた、24時間稼働してそう', timestamp: '20:18' },
+  { type: 'date', text: '12月12日（金）' },
+  { id: 15, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '09:06' },
+  { id: 16, sender: 'me', text: 'いま改めて写真見たけど、綺麗なあやさんと比較してジョージがシュールすぎて電車でちょっと笑ってしまった🐒', timestamp: '15:18' },
+  { id: 17, sender: 'me', text: '昨日腹筋トレしたからお腹痛い…', timestamp: '15:18' },
+  { id: 18, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '20:35' },
+  { id: 19, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '20:35' },
+  { id: 20, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '20:35' },
+  { type: 'date', text: '12月13日（土）' },
+  { id: 21, sender: 'me', text: '言われますが、どちらかというとDJ松永に似てると思います笑', timestamp: '00:42' },
+  { id: 22, sender: 'me', text: '岩本照って男らしい感じですよね、ぼくその逆でおっとりしてるって言われます😭', timestamp: '00:43' },
+  { id: 23, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '07:03' },
+  { id: 24, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '07:04' },
+  { id: 25, sender: 'me', text: 'さん付けするところが良い人感滲み出てますよ', timestamp: '07:04' },
+  { id: 26, sender: 'me', text: 'あやさんは誰かに似てるって言われますか？', timestamp: '07:05' },
+  { id: 27, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '16:38' },
+  { id: 28, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '16:38' },
+  { id: 29, sender: 'me', text: 'フルネームなので結局敬語使ってることは一緒ですよ＾＾', timestamp: '22:40' },
+  { id: 30, sender: 'me', text: '佳子様…すごく綺麗だと思います', timestamp: '22:40' },
+  { id: 31, sender: 'me', text: 'ぼく自分でも会社やってて（本当に小さい）毎年税金払ってるのですが', timestamp: '22:40' },
+  { id: 32, sender: 'me', text: '税金＝佳子様のファンクラブ代と思ってケチらず払ってます', timestamp: '22:41' },
 ];
 
 function App() {
@@ -25,7 +64,7 @@ function App() {
   });
   const [partnerName, setPartnerName] = useState(() => {
     const saved = localStorage.getItem('partner_name');
-    return saved || 'みー';
+    return saved || 'あや';
   });
   const [inputText, setInputText] = useState('');
   const [sender, setSender] = useState('me');
@@ -101,8 +140,8 @@ function App() {
   };
 
   const clearChat = () => {
-    if (confirm('トーク履歴を削除してもよろしいですか？')) {
-      setMessages([]);
+    if (confirm('トーク履歴をリセットして初期データに戻してもよろしいですか？')) {
+      setMessages(INITIAL_MESSAGES);
     }
   };
 
@@ -233,7 +272,6 @@ function App() {
                 placeholder="Aa"
                 className="flex-1 bg-transparent border-none outline-none text-sm placeholder-gray-400"
               />
-              <button className="text-gray-400 ml-2">☺</button>
             </div>
             {inputText.trim() ? (
               <button onClick={handleSend} className="mb-2 text-[#3285DE]"><Send size={24} className="fill-current" /></button>
@@ -254,9 +292,8 @@ function App() {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="メッセージを入力"
-                className="w-full bg-[#F5F5F5] border-none rounded-[20px] py-2.5 pl-4 pr-10 text-sm outline-none placeholder-gray-400"
+                className="w-full bg-[#F5F5F5] border-none rounded-[20px] py-2.5 px-4 text-sm outline-none placeholder-gray-400"
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">☺</button>
             </div>
             <button
               onClick={handleSend}
@@ -277,9 +314,8 @@ function App() {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="メッセージを入力"
-                className="w-full bg-[#F6F6F6] border-none rounded-[28px] py-[10px] pl-4 pr-10 text-[15.5px] outline-none placeholder-[#C0C0C0]"
+                className="w-full bg-[#F6F6F6] border-none rounded-[28px] py-[10px] px-4 text-[15.5px] outline-none placeholder-[#C0C0C0]"
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 text-[#D8D8D8] text-[20px]">☺</button>
             </div>
             <button
               onClick={handleSend}
@@ -423,37 +459,46 @@ function App() {
               <div ref={chatContainerRef} className={`flex-1 flex flex-col ${styles.bg} overflow-hidden`}>
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-4 pt-2 space-y-4">
-                  {/* Date Separator */}
-                  <div className="text-center my-6">
-                    {mode === MODES.LINE ? (
-                      <span className="text-[11px] text-white/90 bg-black/20 px-3 py-1 rounded-full">今日</span>
-                    ) : (
-                      <span className="text-[12px] text-gray-500 font-bold">2/15(木)</span>
-                    )}
-                  </div>
+                  {/* Date Separator (LINE/PAIRS用) - messagesにtype:dateが含まれる場合は二重になるので条件付きにするか、削除 */}
+                  {/* 今回はWithChatScreen側で日付を制御し、LINE/PAIRSでもINITIAL_MESSAGES側のtype:dateを使う方針にするため、一旦コメントアウトまたは削除 */}
 
-                  {messages.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start gap-2.5'} items-end mb-2`}>
-                      {msg.sender === 'partner' && mode !== MODES.WITH && (
-                        <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex-shrink-0 overflow-hidden self-start">
-                          {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-gray-400 text-white"><User size={24} /></div>}
+                  {messages.map((msg, index) => {
+                    if (msg.type === 'date') {
+                      return (
+                        <div key={`date-${index}`} className="text-center my-6">
+                          {mode === MODES.LINE ? (
+                            <span className="text-[11px] text-white/90 bg-black/20 px-3 py-1 rounded-full">{msg.text}</span>
+                          ) : (
+                            <span className="text-[12px] text-gray-500 font-bold">{msg.text}</span>
+                          )}
                         </div>
-                      )}
+                      );
+                    }
+                    if (msg.type === 'appeal' || msg.type === 'response-card') return null; // LINE/Pairsでは表示しない
 
-                      <div className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'} max-w-[76%]`}>
-                        <div className={`flex items-end gap-[6px] ${msg.sender === 'me' ? 'flex-row-reverse' : 'flex-row'} group`}>
-                          <div className={`whitespace-pre-wrap leading-relaxed break-words shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${msg.sender === 'me' ? styles.bubbleMe : styles.bubblePartner}`}>
-                            {msg.text}
+                    return (
+                      <div key={msg.id || index} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start gap-2.5'} items-end mb-2`}>
+                        {msg.sender === 'partner' && (
+                          <div className="w-[40px] h-[40px] rounded-full bg-gray-200 flex-shrink-0 overflow-hidden self-start">
+                            {icons.partner ? <img src={icons.partner} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center bg-gray-400 text-white"><User size={24} /></div>}
                           </div>
-                          <div className="flex flex-col shrink-0 mb-[2px]">
-                            {msg.sender === 'me' && mode === MODES.LINE && <span className="text-[10px] text-white leading-none mb-0.5">既読</span>}
-                            {msg.sender === 'me' && mode === MODES.PAIRS && <span className="text-[10px] text-[#00ADC1] leading-none mb-0.5 font-bold">既読</span>}
-                            <span className={styles.time}>{msg.timestamp}</span>
+                        )}
+
+                        <div className={`flex flex-col ${msg.sender === 'me' ? 'items-end' : 'items-start'} max-w-[76%]`}>
+                          <div className={`flex items-end gap-[6px] ${msg.sender === 'me' ? 'flex-row-reverse' : 'flex-row'} group`}>
+                            <div className={`whitespace-pre-wrap leading-relaxed break-words shadow-[0_1px_2px_rgba(0,0,0,0.05)] ${msg.sender === 'me' ? styles.bubbleMe : styles.bubblePartner}`}>
+                              {msg.text}
+                            </div>
+                            <div className="flex flex-col shrink-0 mb-[2px]">
+                              {msg.sender === 'me' && mode === MODES.LINE && <span className="text-[10px] text-white leading-none mb-0.5">既読</span>}
+                              {msg.sender === 'me' && mode === MODES.PAIRS && <span className="text-[10px] text-[#00ADC1] leading-none mb-0.5 font-bold">既読</span>}
+                              <span className={styles.time}>{msg.timestamp}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <div ref={chatEndRef} />
                 </div>
               </div>
