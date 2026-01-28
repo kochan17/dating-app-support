@@ -35,12 +35,6 @@ const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
     setInputText('');
   };
 
-  // Replace manual mentions of "あや" with the dynamic partnerName
-  const formatText = (text) => {
-    if (!text) return "";
-    return text.replace(/あや/g, partnerName);
-  };
-
   return (
     <div className="sp-container with-header flex flex-col h-full bg-white relative overflow-hidden">
       {/* Header / Navigation */}
@@ -103,7 +97,7 @@ const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
             {msg.dateSeparator && <div className="message_date-separator">{msg.dateSeparator}</div>}
 
             <div className='message_balloon has-message' data-sender={msg.sender}>
-              <p dangerouslySetInnerHTML={{ __html: formatText(msg.text) }}></p>
+              <p dangerouslySetInnerHTML={{ __html: msg.text }}></p>
               {msg.sender === 'partner' && (
                 <a href="#"><img className="message_thumb" src={partnerIcon} alt="" /></a>
               )}
