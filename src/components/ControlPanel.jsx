@@ -6,7 +6,13 @@ const ControlPanel = ({
   partnerName,
   setPartnerName,
   partnerIcon,
-  setPartnerIcon
+  setPartnerIcon,
+  customTime,
+  setCustomTime,
+  onAddDateSeparator,
+  onResetMessages,
+  chatWidth,
+  setChatWidth
 }) => {
   const fileInputRef = useRef(null);
 
@@ -106,6 +112,94 @@ const ControlPanel = ({
           style={{ display: 'none' }}
           accept="image/*"
         />
+      </div>
+
+      <div style={{ borderTop: '1px solid #4a5568', margin: '8px 0' }}></div>
+
+      {/* Advanced Controls */}
+      <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#cbd5e1', marginTop: '0px' }}>高度な設定</h3>
+
+      {/* Message Time Setting */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={{ fontSize: '12px', color: '#94a3b8' }}>送信時刻（空欄で現在時刻）</label>
+        <input
+          type="time"
+          value={customTime}
+          onChange={(e) => setCustomTime(e.target.value)}
+          style={{
+            width: '100%', background: '#1a252f', border: '1px solid #4b5563', borderRadius: '6px', padding: '8px', fontSize: '13px', color: 'white', outline: 'none'
+          }}
+        />
+      </div>
+
+      {/* Date Separator */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={{ fontSize: '12px', color: '#94a3b8' }}>日付区切り線を追加</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input
+            type="text"
+            placeholder="例: 12月15日（金）"
+            id="date-separator-input"
+            style={{
+              flex: 1, background: '#1a252f', border: '1px solid #4b5563', borderRadius: '6px', padding: '8px', fontSize: '13px', color: 'white', outline: 'none', minWidth: 0
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onAddDateSeparator(e.target.value);
+                e.target.value = '';
+              }
+            }}
+          />
+          <button
+            onClick={() => {
+              const input = document.getElementById('date-separator-input');
+              if (input && input.value) {
+                onAddDateSeparator(input.value);
+                input.value = '';
+              }
+            }}
+            style={{
+              background: '#34495e', border: '1px solid #4b5563', borderRadius: '6px', padding: '0 10px', color: 'white', cursor: 'pointer'
+            }}
+          >
+            ＋
+          </button>
+        </div>
+      </div>
+
+      {/* Responsive Settings */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <label style={{ fontSize: '12px', color: '#94a3b8' }}>画面幅の切り替え</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {[
+            { label: 'iPhone 17', width: 402 },
+            { label: '17 Max', width: 440 }
+          ].map(p => (
+            <button
+              key={p.width}
+              onClick={() => setChatWidth(p.width)}
+              style={{
+                flex: 1, padding: '8px 4px', fontSize: '12px', background: chatWidth === p.width ? '#fe6970' : '#34495e', border: chatWidth === p.width ? '1px solid #fe6970' : '1px solid #4b5563', borderRadius: '8px', color: 'white', cursor: 'pointer', transition: 'all 0.2s', fontWeight: chatWidth === p.width ? 'bold' : 'normal'
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Reset */}
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <button
+          onClick={onResetMessages}
+          style={{
+            width: '100%', background: 'transparent', border: '1px solid #ef4444', borderRadius: '8px', padding: '10px', fontSize: '13px', color: '#ef4444', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold'
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }}
+          onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
+        >
+          会話履歴を初期化
+        </button>
       </div>
 
       <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid #374151', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>

@@ -1,37 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: 'me', text: '雰囲気タイプすぎていいねさせていただきました🙇‍♂️', timestamp: '18:31', dateSeparator: '12月9日（火）' },
-    { id: 2, sender: 'partner', text: 'はじめまして(*^^*)<br>最近ハイボールが好きでよく飲みます！<br>Akiraさんはどんなお酒を飲まれますか？', timestamp: '22:39' },
-    { id: 3, sender: 'me', text: 'あやさん！女性らしい優しさと美しさが詰まったようなステキな名前ですね！', timestamp: '00:23', dateSeparator: '12月10日（水）' },
-    { id: 4, sender: 'me', text: '僕はコウタといいます！', timestamp: '00:24' },
-    { id: 5, sender: 'me', text: 'ジョージ最近見ないな〜って思ってたら、あやさんのとこにいたんですね', timestamp: '00:25' },
-    { id: 6, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '04:14' },
-    { id: 7, sender: 'partner', text: '（メッセージ内容を表示中）', timestamp: '04:15' },
-    { id: 8, sender: 'me', text: 'あ, ジョージUFOキャッチャーに転職してたんだ！', timestamp: '14:48' },
-    { id: 10, sender: 'me', text: 'あやさんが頑張って自分のところに人事異動させたんですね', timestamp: '14:49', dateSeparator: '2月15日（木）' },
-  ]);
-
+const WithChatScreen = ({
+  senderMode,
+  partnerName,
+  partnerIcon,
+  messages,
+  onSendMessage,
+  onDeleteMessage
+}) => {
   const [inputText, setInputText] = useState('');
   const chatEndRef = useRef(null);
+  const [hoveredMessageId, setHoveredMessageId] = useState(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = () => {
+  const handleSendClick = () => {
     if (!inputText.trim()) return;
-
-    const now = new Date();
-    const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-
-    setMessages([...messages, {
-      id: Date.now(),
-      sender: senderMode,
-      text: inputText.replace(/\n/g, '<br />'),
-      timestamp: timestamp
-    }]);
+    onSendMessage(inputText);
     setInputText('');
   };
 
@@ -94,17 +81,85 @@ const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
       <div className='messages' style={{ flex: 1, overflowY: 'auto' }}>
         {messages.map((msg) => (
           <React.Fragment key={msg.id}>
-            {msg.dateSeparator && <div className="message_date-separator">{msg.dateSeparator}</div>}
-
-            <div className='message_balloon has-message' data-sender={msg.sender}>
-              <p dangerouslySetInnerHTML={{ __html: msg.text }}></p>
-              {msg.sender === 'partner' && (
-                <a href="#"><img className="message_thumb" src={partnerIcon} alt="" /></a>
-              )}
-              <div className={`message_sent-at ${msg.sender === 'me' ? 'is-left' : 'is-right'}`}>
-                {msg.timestamp}
+            {msg.dateSeparator ? (
+              <div
+                className="message_date-separator"
+                onMouseEnter={() => setHoveredMessageId(msg.id)}
+                onMouseLeave={() => setHoveredMessageId(null)}
+                style={{ position: 'relative' }}
+              >
+                {msg.dateSeparator}
+                {hoveredMessageId === msg.id && (
+                  <button
+                    onClick={() => onDeleteMessage(msg.id)}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: '#ef4444',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
               </div>
-            </div>
+            ) : (
+              <div
+                className='message_balloon has-message'
+                data-sender={msg.sender}
+                onMouseEnter={() => setHoveredMessageId(msg.id)}
+                onMouseLeave={() => setHoveredMessageId(null)}
+                style={{ position: 'relative' }}
+              >
+                <p dangerouslySetInnerHTML={{ __html: msg.text }}></p>
+                {msg.sender === 'partner' && (
+                  <a href="#"><img className="message_thumb" src={partnerIcon} alt="" /></a>
+                )}
+                <div className={`message_sent-at ${msg.sender === 'me' ? 'is-left' : 'is-right'}`}>
+                  {msg.timestamp}
+                </div>
+
+                {/* Delete Button */}
+                {hoveredMessageId === msg.id && (
+                  <button
+                    onClick={() => onDeleteMessage(msg.id)}
+                    style={{
+                      position: 'absolute',
+                      top: '-8px',
+                      [msg.sender === 'me' ? 'left' : 'right']: '-8px',
+                      background: '#ef4444',
+                      color: 'white',
+                      border: '1px solid white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      fontSize: '14px',
+                      lineHeight: '1',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                      zIndex: 10
+                    }}
+                    title="メッセージを削除"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            )}
           </React.Fragment>
         ))}
         <div ref={chatEndRef} />
@@ -120,7 +175,7 @@ const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSendMessage();
+                handleSendClick();
               }
             }}
             className="topic-footer_message-form_body"
@@ -132,7 +187,7 @@ const WithChatScreen = ({ senderMode, partnerName, partnerIcon }) => {
           <button
             type="button"
             className="topic-footer_message-form_submit"
-            onClick={handleSendMessage}
+            onClick={handleSendClick}
             style={{ opacity: inputText.trim() ? 1 : 0.5 }}
           ></button>
         </div>
