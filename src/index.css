@@ -20857,6 +20857,23 @@ dl.meet-up-event-description .text-underline {
   background-image: url(https://cdn.with.is/assets/messages/tail_lightgray-6f14112ab98910d6036715c1760eae89f36e5a32e4e06d9ba1a7bd55273ae492.svg)
 }
 
+/* Hidden/Blurred State */
+.message_balloon.is-hidden>p {
+  filter: blur(12px);
+  opacity: 0;
+  user-select: none;
+}
+
+.message_balloon.is-hidden[data-sender=me] {
+  background-color: #ff6b84 !important;
+  border-color: #ff6b84 !important;
+}
+
+.message_balloon.is-hidden[data-sender=partner] {
+  background-color: #f2f2f2 !important;
+  border-color: #f2f2f2 !important;
+}
+
 .message_balloon.has-message>p {
   padding: 8px 16px
 }
@@ -45499,7 +45516,7 @@ a.with-doctor_main-photo-reload-link:active {
   line-height: 40px;
   color: rgba(0, 0, 0, .4);
   font-size: 14px;
-  font-weigth: bold;
+  font-weight: bold;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, .07);
   border-radius: 8px

@@ -79,6 +79,10 @@ function App() {
     setMessages(messages.filter(msg => msg.id !== id));
   };
 
+  const handleUpdateMessage = (id, updates) => {
+    setMessages(messages.map(msg => msg.id === id ? { ...msg, ...updates } : msg));
+  };
+
   const handleResetMessages = () => {
     if (confirm('会話履歴を初期状態に戻しますか？')) {
       setMessages(initialMessages);
@@ -115,6 +119,7 @@ function App() {
             messages={messages}
             onSendMessage={handleSendMessage}
             onDeleteMessage={handleDeleteMessage}
+            onUpdateMessage={handleUpdateMessage}
           />
         </div>
       </div>

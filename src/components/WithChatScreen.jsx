@@ -6,11 +6,22 @@ const WithChatScreen = ({
   partnerIcon,
   messages,
   onSendMessage,
-  onDeleteMessage
+  onDeleteMessage,
+  onUpdateMessage
 }) => {
   const [inputText, setInputText] = useState('');
   const chatEndRef = useRef(null);
   const [hoveredMessageId, setHoveredMessageId] = useState(null);
+  const [hiddenMessageIds, setHiddenMessageIds] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editText, setEditText] = useState('');
+
+  const toggleMessageHidden = (id) => {
+    setHiddenMessageIds((prev) =>
+      prev.includes(id) ? prev.filter((msgId) => msgId !== id) : [...prev, id]
+    );
+  };
+
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -64,18 +75,6 @@ const WithChatScreen = ({
         <div className='topic-header_config-btn'></div>
       </div>
 
-      <div className='focus-level_container shrink-0'>
-        <div className='focus-level is_focus-level_locked'>
-          <div className='focus-level_title'>
-            <span className='size12'>あなたへの</span><br />
-            <span className='focus-level_title_bottom is_focus-level_locked'>関心</span>
-          </div>
-          <div className='text-center'>
-            <a className="button button-royal-vip button-s focus-level_detail-button" href="#">詳細を見る</a>
-          </div>
-          <div><div className='focus-level_help-icon'></div></div>
-        </div>
-      </div>
 
       {/* Messages Scroll Area */}
       <div className='messages' style={{ flex: 1, overflowY: 'auto' }}>
@@ -86,12 +85,49 @@ const WithChatScreen = ({
                 className="message_date-separator"
                 onMouseEnter={() => setHoveredMessageId(msg.id)}
                 onMouseLeave={() => setHoveredMessageId(null)}
-                style={{ position: 'relative' }}
+                onClick={() => {
+                  setEditingId(msg.id);
+                  setEditText(msg.dateSeparator);
+                }}
+                style={{ position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                {msg.dateSeparator}
-                {hoveredMessageId === msg.id && (
+                {editingId === msg.id ? (
+                  <input
+                    type="text"
+                    value={editText}
+                    autoFocus
+                    onChange={(e) => setEditText(e.target.value)}
+                    onBlur={() => {
+                      onUpdateMessage(msg.id, { dateSeparator: editText });
+                      setEditingId(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        onUpdateMessage(msg.id, { dateSeparator: editText });
+                        setEditingId(null);
+                      } else if (e.key === 'Escape') {
+                        setEditingId(null);
+                      }
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'white',
+                      textAlign: 'center',
+                      fontSize: 'inherit',
+                      width: '100%',
+                      outline: 'none'
+                    }}
+                  />
+                ) : (
+                  msg.dateSeparator
+                )}
+                {hoveredMessageId === msg.id && editingId !== msg.id && (
                   <button
-                    onClick={() => onDeleteMessage(msg.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteMessage(msg.id);
+                    }}
                     style={{
                       position: 'absolute',
                       right: '10px',
@@ -116,11 +152,12 @@ const WithChatScreen = ({
               </div>
             ) : (
               <div
-                className='message_balloon has-message'
+                className={`message_balloon has-message ${hiddenMessageIds.includes(msg.id) ? 'is-hidden' : ''}`}
                 data-sender={msg.sender}
                 onMouseEnter={() => setHoveredMessageId(msg.id)}
                 onMouseLeave={() => setHoveredMessageId(null)}
-                style={{ position: 'relative' }}
+                onClick={() => toggleMessageHidden(msg.id)}
+                style={{ position: 'relative', cursor: 'pointer' }}
               >
                 <p dangerouslySetInnerHTML={{ __html: msg.text }}></p>
                 {msg.sender === 'partner' && (
@@ -133,7 +170,10 @@ const WithChatScreen = ({
                 {/* Delete Button */}
                 {hoveredMessageId === msg.id && (
                   <button
-                    onClick={() => onDeleteMessage(msg.id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent toggling hidden state when deleting
+                      onDeleteMessage(msg.id);
+                    }}
                     style={{
                       position: 'absolute',
                       top: '-8px',
