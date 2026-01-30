@@ -29,8 +29,9 @@ const WithChatScreen = ({
 
   const handleSendClick = () => {
     if (!inputText.trim()) return;
-    onSendMessage(inputText);
-    setInputText('');
+    const messageToSend = inputText;
+    setInputText(''); // Clear input immediately
+    onSendMessage(messageToSend);
   };
 
   return (

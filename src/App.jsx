@@ -89,6 +89,8 @@ function App() {
     }
   };
 
+  const chatContainerRef = React.useRef(null);
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: '#f0f2f5' }}>
       {/* Sidebar Control Panel */}
@@ -106,12 +108,16 @@ function App() {
           onResetMessages={handleResetMessages}
           chatWidth={chatWidth}
           setChatWidth={setChatWidth}
+          chatContainerRef={chatContainerRef}
         />
       </div>
 
       {/* Main Content Area */}
       <div style={{ flex: 1, display: 'flex', justifyContent: 'center', height: '100%', backgroundColor: '#f5f5f5', overflow: 'hidden' }}>
-        <div style={{ width: '100%', maxWidth: 'var(--sp-max-width)', height: '100%', backgroundColor: 'white', position: 'relative', boxShadow: '0 0 20px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+        <div
+          ref={chatContainerRef}
+          style={{ width: '100%', maxWidth: 'var(--sp-max-width)', height: '100%', backgroundColor: 'white', position: 'relative', boxShadow: '0 0 20px rgba(0,0,0,0.1)', overflow: 'hidden' }}
+        >
           <WithChatScreen
             senderMode={senderMode}
             partnerName={partnerName}

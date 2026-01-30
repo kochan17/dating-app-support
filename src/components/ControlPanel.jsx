@@ -12,9 +12,62 @@ const ControlPanel = ({
   onAddDateSeparator,
   onResetMessages,
   chatWidth,
-  setChatWidth
+  setChatWidth,
+  chatContainerRef
 }) => {
   const fileInputRef = useRef(null);
+
+  const handleTakeScreenshot = async () => {
+    if (!chatContainerRef.current) return;
+
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const element = chatContainerRef.current;
+
+      const canvas = await html2canvas(element, {
+        useCORS: true,
+        scale: 2,
+        backgroundColor: '#ffffff',
+        width: element.offsetWidth,
+        height: element.offsetHeight,
+        windowWidth: 1200, // Use a standard large window width
+        windowHeight: element.offsetHeight + 200,
+        x: element.getBoundingClientRect().left,
+        y: element.getBoundingClientRect().top,
+        scrollX: -window.scrollX,
+        scrollY: -window.scrollY,
+        onclone: (clonedDoc) => {
+          // Fix fixed positioning in the cloned document
+          const clonedHeader = clonedDoc.querySelector('.header');
+          const clonedTopicHeader = clonedDoc.querySelector('#topic-header');
+          const clonedFooter = clonedDoc.querySelector('.topic-footer');
+
+          if (clonedHeader) clonedHeader.style.position = 'absolute';
+          if (clonedTopicHeader) {
+            clonedTopicHeader.style.position = 'absolute';
+            clonedTopicHeader.style.top = '50px'; // Below navigation
+          }
+          if (clonedFooter) clonedFooter.style.position = 'absolute';
+        }
+      });
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+
+      const now = new Date();
+      const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '').split('.')[0].replace(/-/g, '');
+      const filename = `screenshot_${timestamp}.png`;
+
+      link.href = dataUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Screenshot failed:', err);
+      alert('スクリーンショットの撮影に失敗しました。');
+    }
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -199,6 +252,32 @@ const ControlPanel = ({
           onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#ef4444'; }}
         >
           会話履歴を初期化
+        </button>
+
+        <button
+          onClick={handleTakeScreenshot}
+          style={{
+            width: '100%',
+            background: '#fe6970',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '12px',
+            fontSize: '14px',
+            color: 'white',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 6px rgba(254,105,112,0.2)'
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 8px rgba(254,105,112,0.3)'; }}
+          onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(254,105,112,0.2)'; }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          スクリーンショットを保存
         </button>
       </div>
 
