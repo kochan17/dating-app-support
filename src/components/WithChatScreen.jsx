@@ -15,6 +15,28 @@ const WithChatScreen = ({
   const [hiddenMessageIds, setHiddenMessageIds] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const fileInputRef = useRef(null);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result;
+      if (base64) {
+        // Send as an img tag with the appropriate class from index.css
+        onSendMessage(`<img class="message_balloon_photo" src="${base64}" alt="uploaded photo" />`);
+      }
+    };
+    reader.readAsDataURL(file);
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  };
 
   const toggleMessageHidden = (id) => {
     setHiddenMessageIds((prev) =>
@@ -208,30 +230,46 @@ const WithChatScreen = ({
       </div>
 
       {/* Footer / Input Area */}
-      <div className='topic-footer shrink-0'>
-        <div className='topic-footer_message-form'>
-          <div className='topic-footer_message-form_photo is-disabled'></div>
+      <div className='topic-footer shrink-0' style={{ zIndex: 100 }}>
+        <form
+          className='topic-footer_message-form'
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendClick();
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          <div
+            className='topic-footer_message-form_photo'
+            onClick={handlePhotoClick}
+          ></div>
           <textarea
             placeholder="メッセージを入力"
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              // Command+Enter (Mac) or Ctrl+Enter (Windows) to send
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault();
                 handleSendClick();
               }
+              // Allow plain Enter for new lines (default behavior)
             }}
+            rows="1"
             className="topic-footer_message-form_body"
             id="message_form_body"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            style={{ height: 'auto', minHeight: '38px', borderRadius: '20px', backgroundColor: '#f6f6f6', border: 'none', padding: '10px 15px' }}
           />
           <button
-            type="button"
-            className="topic-footer_message-form_submit"
-            onClick={handleSendClick}
-            style={{ opacity: inputText.trim() ? 1 : 0.5 }}
+            type="submit"
+            className={`topic-footer_message-form_submit ${inputText.trim() ? 'is-active' : ''}`}
           ></button>
-        </div>
+        </form>
       </div>
 
       <div style={{ clear: 'both' }}></div>

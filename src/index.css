@@ -20977,7 +20977,7 @@ dl.meet-up-event-description .text-underline {
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
-  padding: 10px 15px;
+  padding: 6px 12px;
   -webkit-box-pack: justify;
   justify-content: space-between;
   -webkit-box-align: center;
@@ -20991,9 +20991,12 @@ dl.meet-up-event-description .text-underline {
   margin: auto 0;
   height: 35px;
   width: 35px;
-  background: rgba(0, 0, 0, .4);
-  -webkit-mask-image: url(https://cdn.with.is/assets/shared/system_icons/icn_camera-312780c578543f1e87bb2512737d975f7c4a682077323133ee14dd326d6c6279.svg?_cors);
-  mask-image: url(https://cdn.with.is/assets/shared/system_icons/icn_camera-312780c578543f1e87bb2512737d975f7c4a682077323133ee14dd326d6c6279.svg?_cors);
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  background: #aaa;
+  -webkit-mask-image: url(/icons/icn_camera.svg);
+  mask-image: url(/icons/icn_camera.svg);
   -webkit-mask-position: center;
   mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -21003,7 +21006,7 @@ dl.meet-up-event-description .text-underline {
 }
 
 .topic-footer_message-form_photo.is-disabled {
-  background: #e5e5e5
+  background: #b2b2b2
 }
 
 #message_form_photo,
@@ -21012,26 +21015,33 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 .topic-footer_message-form_body {
-  height: 35px;
-  width: 80%;
+  height: 32px;
+  min-height: 32px;
+  flex: 1;
+  margin: 0 10px;
   color: rgba(0, 0, 0, .7);
   border-radius: 24px;
   background-color: #f5f5f5;
   border: none;
-  padding: 10px 12px;
+  padding: 6px 15px;
   font-size: 14px;
-  line-height: 1.2;
+  line-height: 1.4;
   caret-color: #fe6970;
-  max-height: 135px
+  max-height: 135px;
+  resize: none;
+  overflow-y: auto;
 }
 
 .topic-footer_message-form_submit {
   margin: auto 0;
   height: 35px;
   width: 35px;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
   background: rgba(0, 0, 0, .4);
-  -webkit-mask-image: url(https://cdn.with.is/assets/shared/system_icons/icn_send-4f5df2719e82ff9f14ef77773cdf21d1315cec78f2e5e130036d361c5bfb232b.svg?_cors);
-  mask-image: url(https://cdn.with.is/assets/shared/system_icons/icn_send-4f5df2719e82ff9f14ef77773cdf21d1315cec78f2e5e130036d361c5bfb232b.svg?_cors);
+  -webkit-mask-image: url(/icons/icn_send.svg);
+  mask-image: url(/icons/icn_send.svg);
   -webkit-mask-position: center;
   mask-position: center;
   -webkit-mask-repeat: no-repeat;
@@ -21041,12 +21051,12 @@ input[type=file]::-webkit-file-upload-button {
 }
 
 .topic-footer_message-form_submit.is-disabled {
-  background: #e5e5e5
+  background: #b2b2b2
 }
 
 .topic-footer_message-form_submit.is-active {
-  -webkit-mask-image: url(https://cdn.with.is/assets/shared/system_icons/fill_icn_send-01695789ae2934b966970f75a379576484cb34cc9f2cafe36646c70672a7f3bb.svg?_cors);
-  mask-image: url(https://cdn.with.is/assets/shared/system_icons/fill_icn_send-01695789ae2934b966970f75a379576484cb34cc9f2cafe36646c70672a7f3bb.svg?_cors);
+  -webkit-mask-image: url(/icons/fill_icn_send.svg);
+  mask-image: url(/icons/fill_icn_send.svg);
   background: #fe6970
 }
 
